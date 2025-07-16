@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Guide: The OBBB Act of 2025</title>
+    <title>Interactive Guide: The OBBB Act of 2025 (with Gemini AI)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: A dashboard-style single-page application is used to provide a non-linear, user-centric experience for tax preparers. The layout features a main navigation sidebar to switch between key contexts: 'Dashboard', 'Individuals', 'Businesses', and a 'Preparer Action Plan'. This structure allows a preparer to quickly jump to the most relevant information for their current client (e.g., a family, a small business owner) rather than scrolling through a linear document. Key interactions include a dynamic SALT cap calculator and a side-by-side comparison tool for business provisions. This task-oriented design is more efficient for the real-world workflow of a tax professional than a simple digital report. -->
+    <!-- Application Structure Plan: A dashboard-style single-page application is used to provide a non-linear, user-centric experience for tax preparers. The layout features a main navigation sidebar to switch between key contexts: 'Dashboard', 'Individuals', 'Businesses', and a 'Preparer Action Plan'. This structure allows a preparer to quickly jump to the most relevant information for their current client (e.g., a family, a small business owner) rather than scrolling through a linear document. Key interactions include a dynamic SALT cap calculator, a side-by-side comparison tool for business provisions, and new Gemini API-powered tools for drafting client emails and generating business strategies. This task-oriented design is more efficient for the real-world workflow of a tax professional than a simple digital report. -->
     <!-- Visualization & Content Choices: 
         - Report Info: Standard Deduction Amounts -> Goal: Compare -> Viz: Bar Chart (Chart.js) -> Interaction: Visual comparison of filing statuses -> Justification: Quickly shows the magnitude of the deduction for different filers.
         - Report Info: New Temporary Deductions -> Goal: Inform/Organize -> Viz: Interactive Cards (HTML/JS) -> Interaction: Click to reveal details -> Justification: Presents dense rules in a digestible, on-demand format without cluttering the UI.
         - Report Info: SALT Deduction Cap & Phase-Out -> Goal: Explore Relationships/Calculate -> Viz: Interactive Calculator (HTML/JS) -> Interaction: User inputs MAGI/status to see their specific cap -> Justification: Provides a practical, high-value tool that directly answers a key client question.
         - Report Info: Key Business Provision Changes -> Goal: Compare/Change -> Viz: Toggle-based Content Switcher (HTML/JS) -> Interaction: User toggles between Pre/Post OBBB law -> Justification: Clearly highlights the impact of the new law on business clients.
         - Report Info: Preparer Checklist -> Goal: Organize/Action -> Viz: Interactive Checklist (HTML/JS) -> Interaction: User can check off items -> Justification: Transforms a static list into an actionable to-do list for branch managers.
+        - New Feature: Client Communication -> Goal: Generate Text -> Viz: Gemini API Integration -> Interaction: User selects a topic and clicks a button to generate an email draft -> Justification: Automates a common, time-consuming task for preparers.
+        - New Feature: Business Strategy -> Goal: Generate Ideas -> Viz: Gemini API Integration -> Interaction: User inputs an industry and clicks a button to get tailored tax strategies -> Justification: Provides high-value, proactive advice for business clients.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -49,6 +51,19 @@
         .content-section.active {
             display: block;
         }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-stone-50 text-slate-800">
@@ -56,7 +71,7 @@
     <div class="flex flex-col md:flex-row min-h-screen">
         <!-- Sidebar Navigation -->
         <nav id="sidebar" class="w-full md:w-64 bg-white border-r border-stone-200 p-4 md:p-6 flex-shrink-0">
-            <h1 class="text-xl font-bold text-indigo-700 mb-6">OBBB Act Guide</h1>
+            <h1 class="text-xl font-bold text-indigo-700 mb-6">OBBB Act Guide ✨</h1>
             <ul class="space-y-2">
                 <li><a href="#dashboard" class="nav-link flex items-center p-3 rounded-lg hover:bg-stone-100 active"><span>&#128200;</span><span class="ml-3">Dashboard</span></a></li>
                 <li><a href="#individuals" class="nav-link flex items-center p-3 rounded-lg hover:bg-stone-100"><span>&#128106;</span><span class="ml-3">For Individuals</span></a></li>
@@ -72,13 +87,12 @@
             <section id="dashboard" class="content-section active">
                 <header class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">The Preparer's Guide to the "One Big Beautiful Bill"</h2>
-                    <p class="mt-2 text-lg text-slate-600">An interactive dashboard to navigate the key provisions of the OBBB Act of 2025. This guide transforms the complex law into an actionable tool for tax professionals.</p>
+                    <p class="mt-2 text-lg text-slate-600">An interactive dashboard, now with ✨ Gemini-powered tools, to navigate the key provisions of the OBBB Act of 2025.</p>
                 </header>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
                         <h3 class="text-xl font-semibold mb-4 text-slate-800">Key Individual Changes</h3>
-                        <p class="text-slate-600 mb-4">The law makes the TCJA individual tax rates permanent and significantly increases the standard deduction, while introducing new, temporary deductions for specific groups.</p>
                         <ul class="space-y-3 list-disc list-inside text-slate-700">
                             <li><span class="font-semibold">Permanently higher standard deductions.</span></li>
                             <li>Four new temporary "above-the-line" deductions for 2025-2028.</li>
@@ -88,7 +102,6 @@
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
                         <h3 class="text-xl font-semibold mb-4 text-slate-800">Key Business Changes</h3>
-                        <p class="text-slate-600 mb-4">The OBBB provides powerful, permanent incentives for domestic investment in assets and innovation, solidifying key pro-business provisions from the TCJA.</p>
                          <ul class="space-y-3 list-disc list-inside text-slate-700">
                             <li><span class="font-semibold">Permanent 20% QBI Deduction (Sec. 199A).</span></li>
                             <li><span class="font-semibold">100% Bonus Depreciation permanently restored.</span></li>
@@ -103,7 +116,7 @@
                     <div class="chart-container">
                         <canvas id="standardDeductionChart"></canvas>
                     </div>
-                     <p class="text-center text-sm text-slate-500 mt-4">These new, higher standard deductions are a permanent feature of the tax code, simplifying filing for millions but making the standard vs. itemized decision more critical.</p>
+                     <p class="text-center text-sm text-slate-500 mt-4">These new, higher standard deductions are a permanent feature of the tax code.</p>
                 </div>
             </section>
 
@@ -111,22 +124,34 @@
             <section id="individuals" class="content-section">
                 <header class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">Provisions for Individual Taxpayers</h2>
-                    <p class="mt-2 text-lg text-slate-600">This section details the most impactful changes affecting individual returns, from new temporary deductions to a game-changing increase in the SALT cap.</p>
+                    <p class="mt-2 text-lg text-slate-600">Explore impactful changes and use Gemini to draft client communications.</p>
                 </header>
 
-                <!-- New Temporary Deductions -->
                 <div class="mb-12">
                     <h3 class="text-2xl font-semibold mb-4 text-slate-800">New Temporary Deductions (2025-2028)</h3>
-                    <p class="text-slate-600 mb-6">Four major "above-the-line" deductions are available from 2025-2028. Click each card for details on eligibility, limits, and phase-outs.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="deduction-cards">
-                        <!-- Cards will be injected by JS -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="deduction-cards"></div>
+                </div>
+
+                <div class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-2xl font-semibold mb-2 text-slate-800">✨ AI Client Email Drafter</h3>
+                    <p class="text-slate-600 mb-6">Select a new deduction to generate a simple, client-friendly email explanation using Gemini.</p>
+                    <div class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-grow">
+                            <label for="email-topic-select" class="block text-sm font-medium text-slate-700 mb-1">Deduction Topic</label>
+                            <select id="email-topic-select" class="w-full p-3 border border-stone-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"></select>
+                        </div>
+                        <button id="generate-email-btn" class="w-full sm:w-auto bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Generate Email</button>
+                    </div>
+                    <div id="email-output-container" class="mt-6 hidden">
+                        <div id="email-loader" class="loader hidden"></div>
+                        <div id="email-output" class="bg-stone-100 p-4 rounded-lg border border-stone-200 whitespace-pre-wrap font-mono text-sm"></div>
+                        <button id="copy-email-btn" class="mt-4 bg-slate-500 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-600">Copy Text</button>
                     </div>
                 </div>
 
-                <!-- SALT Cap Calculator -->
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-stone-200">
                     <h3 class="text-2xl font-semibold mb-2 text-slate-800">Interactive 2025 SALT Deduction Calculator</h3>
-                    <p class="text-slate-600 mb-6">Determine a client's maximum State and Local Tax (SALT) deduction. For tax years 2025-2029, the cap is temporarily raised from $10,000 to $40,000, but is subject to a high-income phase-out.</p>
+                    <p class="text-slate-600 mb-6">Determine a client's maximum State and Local Tax (SALT) deduction with the new $40,000 cap and phase-out rules.</p>
                     <div class="flex flex-wrap gap-6 items-end">
                         <div class="flex-grow">
                             <label for="magi-input" class="block text-sm font-medium text-slate-700 mb-1">Client's Modified AGI (MAGI)</label>
@@ -139,7 +164,7 @@
                                 <option value="mfs">Married Filing Separately</option>
                             </select>
                         </div>
-                        <button id="calculate-salt-btn" class="w-full md:w-auto bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Calculate</button>
+                        <button id="calculate-salt-btn" class="w-full md:w-auto bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700">Calculate</button>
                     </div>
                     <div id="salt-result" class="mt-6 text-center bg-indigo-50 p-6 rounded-lg border border-indigo-200 hidden">
                         <p class="text-lg text-slate-700">Client's 2025 SALT Deduction Cap:</p>
@@ -152,20 +177,35 @@
             <section id="businesses" class="content-section">
                 <header class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">Provisions for Business & Self-Employed</h2>
-                     <p class="mt-2 text-lg text-slate-600">The OBBB solidifies major pro-growth provisions. This section provides an interactive comparison of the rules before and after the new law, helping you advise on capital investment and R&D strategy.</p>
+                     <p class="mt-2 text-lg text-slate-600">Compare rule changes and use Gemini to generate tailored tax strategies for your business clients.</p>
                 </header>
 
+                <div class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-2xl font-semibold mb-2 text-slate-800">✨ AI Business Strategy Generator</h3>
+                    <p class="text-slate-600 mb-6">Enter a client's industry to generate actionable tax planning strategies related to the OBBB Act.</p>
+                    <div class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-grow">
+                             <label for="industry-input" class="block text-sm font-medium text-slate-700 mb-1">Client's Industry</label>
+                            <input type="text" id="industry-input" placeholder="e.g., Restaurant, Construction, Software" class="w-full p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <button id="generate-strategy-btn" class="w-full sm:w-auto bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700">Generate Strategies</button>
+                    </div>
+                     <div id="strategy-output-container" class="mt-6 hidden">
+                        <div id="strategy-loader" class="loader hidden"></div>
+                        <div id="strategy-output" class="bg-stone-100 p-4 rounded-lg border border-stone-200 whitespace-pre-wrap text-sm"></div>
+                        <button id="copy-strategy-btn" class="mt-4 bg-slate-500 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-slate-600">Copy Text</button>
+                    </div>
+                </div>
+
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-stone-200">
+                     <h3 class="text-2xl font-semibold mb-4 text-slate-800">Law Comparison: Pre- vs. Post-OBBB</h3>
                      <div class="flex justify-center mb-6">
                         <div class="inline-flex rounded-lg shadow-sm">
                             <button id="pre-obbb-btn" class="px-6 py-3 bg-indigo-600 text-white rounded-l-lg font-semibold text-sm">Pre-OBBB Law (2024)</button>
                             <button id="post-obbb-btn" class="px-6 py-3 bg-white text-slate-700 rounded-r-lg font-semibold text-sm border border-l-0 border-stone-300">Post-OBBB Law (2025+)</button>
                         </div>
                     </div>
-
-                    <div id="business-provisions-content">
-                        <!-- Content will be injected by JS -->
-                    </div>
+                    <div id="business-provisions-content"></div>
                 </div>
             </section>
 
@@ -173,12 +213,10 @@
             <section id="action-plan" class="content-section">
                 <header class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">Manager's Action Plan & Checklist</h2>
-                    <p class="mt-2 text-lg text-slate-600">Use this interactive checklist to ensure your team is prepared for the new tax law. These are critical steps for compliance, client communication, and risk management.</p>
+                    <p class="mt-2 text-lg text-slate-600">Use this interactive checklist to ensure your team is prepared for the new tax law.</p>
                 </header>
                  <div class="bg-white p-8 rounded-xl shadow-sm border border-stone-200">
-                    <ul id="checklist" class="space-y-4">
-                       <!-- Checklist items will be injected by JS -->
-                    </ul>
+                    <ul id="checklist" class="space-y-4"></ul>
                 </div>
             </section>
 
@@ -201,6 +239,21 @@
             const businessProvisionsContent = document.getElementById('business-provisions-content');
             
             const checklistContainer = document.getElementById('checklist');
+
+            // Gemini AI Elements
+            const emailTopicSelect = document.getElementById('email-topic-select');
+            const generateEmailBtn = document.getElementById('generate-email-btn');
+            const emailOutputContainer = document.getElementById('email-output-container');
+            const emailLoader = document.getElementById('email-loader');
+            const emailOutput = document.getElementById('email-output');
+            const copyEmailBtn = document.getElementById('copy-email-btn');
+
+            const industryInput = document.getElementById('industry-input');
+            const generateStrategyBtn = document.getElementById('generate-strategy-btn');
+            const strategyOutputContainer = document.getElementById('strategy-output-container');
+            const strategyLoader = document.getElementById('strategy-loader');
+            const strategyOutput = document.getElementById('strategy-output');
+            const copyStrategyBtn = document.getElementById('copy-strategy-btn');
 
             const appData = {
                 standardDeductions: {
@@ -252,30 +305,51 @@
                     ]
                 },
                 actionChecklist: [
-                    "Schedule comprehensive team training on OBBB provisions.",
+                    "Schedule comprehensive team training on OBBB provisions, including AI tools.",
                     "Update all client intake forms and checklists with new questions.",
-                    "Proactively identify and engage key client segments (e.g., high-tax state non-itemizers).",
+                    "Proactively identify and engage key client segments (e.g., high-tax state non-itemizers, specific industries).",
                     "Develop and distribute verification resources (e.g., VIN checkers).",
                     "Emphasize a culture of diligence and documentation for risk management."
                 ]
             };
 
-            function navigate(hash) {
-                sections.forEach(section => {
-                    if ('#' + section.id === hash) {
-                        section.classList.add('active');
-                    } else {
-                        section.classList.remove('active');
-                    }
-                });
+            async function callGeminiAPI(prompt, loaderElement, outputElement) {
+                loaderElement.classList.remove('hidden');
+                outputElement.textContent = '';
+                
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-                navLinks.forEach(link => {
-                    if (link.getAttribute('href') === hash) {
-                        link.classList.add('active');
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        outputElement.textContent = text;
                     } else {
-                        link.classList.remove('active');
+                        outputElement.textContent = 'Error: Could not generate a response. Please try again.';
+                        console.error('Unexpected API response structure:', result);
                     }
-                });
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    outputElement.textContent = 'An error occurred. Please check the console for details.';
+                } finally {
+                    loaderElement.classList.add('hidden');
+                }
+            }
+
+            function navigate(hash) {
+                sections.forEach(section => section.classList.toggle('active', '#' + section.id === hash));
+                navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === hash));
             }
 
             navLinks.forEach(link => {
@@ -291,96 +365,104 @@
                 appData.temporaryDeductions.forEach(deduction => {
                     const card = document.createElement('div');
                     card.className = 'bg-white p-5 rounded-xl shadow-sm border border-stone-200 cursor-pointer hover:shadow-lg hover:border-indigo-300 transition-shadow duration-300';
-                    card.innerHTML = `
-                        <div class="flex items-center mb-3">
-                            <span class="text-3xl">${deduction.icon}</span>
-                            <h4 class="text-lg font-semibold ml-3 text-slate-800">${deduction.title}</h4>
-                        </div>
-                        <div class="details hidden text-slate-600 space-y-2 text-sm">
-                            <p><strong>Limit:</strong> ${deduction.limit}</p>
-                            <p><strong>Phase-Out:</strong> ${deduction.phaseOut}</p>
-                            <p><strong>Key Rules:</strong> ${deduction.rules}</p>
-                        </div>
-                    `;
+                    card.innerHTML = `<div class="flex items-center mb-3"><span class="text-3xl">${deduction.icon}</span><h4 class="text-lg font-semibold ml-3 text-slate-800">${deduction.title}</h4></div><div class="details hidden text-slate-600 space-y-2 text-sm"><p><strong>Limit:</strong> ${deduction.limit}</p><p><strong>Phase-Out:</strong> ${deduction.phaseOut}</p><p><strong>Key Rules:</strong> ${deduction.rules}</p></div>`;
                     deductionCardsContainer.appendChild(card);
+                    card.addEventListener('click', () => card.querySelector('.details').classList.toggle('hidden'));
+                });
+            }
+            
+            function initEmailGenerator() {
+                appData.temporaryDeductions.forEach(deduction => {
+                    const option = document.createElement('option');
+                    option.value = deduction.title;
+                    option.textContent = deduction.title;
+                    emailTopicSelect.appendChild(option);
+                });
 
-                    card.addEventListener('click', () => {
-                        card.querySelector('.details').classList.toggle('hidden');
-                    });
+                generateEmailBtn.addEventListener('click', () => {
+                    const selectedDeductionTitle = emailTopicSelect.value;
+                    const deductionDetails = appData.temporaryDeductions.find(d => d.title === selectedDeductionTitle);
+                    if (!deductionDetails) return;
+
+                    const prompt = `You are a friendly and professional tax advisor. Draft a brief, easy-to-understand email for a client explaining the new "${deductionDetails.title}" deduction. Explain what it is, its limit of ${deductionDetails.limit}, and that it's temporary for 2025-2028. Do not give personalized advice, but encourage them to provide relevant documents if they think they might qualify. Keep it concise and clear.`;
+                    
+                    emailOutputContainer.classList.remove('hidden');
+                    callGeminiAPI(prompt, emailLoader, emailOutput);
+                });
+
+                copyEmailBtn.addEventListener('click', () => {
+                    const textToCopy = emailOutput.textContent;
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    copyEmailBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyEmailBtn.textContent = 'Copy Text'; }, 2000);
                 });
             }
 
             calculateSaltBtn.addEventListener('click', () => {
                 const magi = parseFloat(document.getElementById('magi-input').value) || 0;
                 const status = document.getElementById('filing-status-select').value;
-                let cap = 0;
+                let cap = (status === 'mfj') ? 40000 : 20000;
+                const phaseOutStart = (status === 'mfj') ? 500000 : 250000;
+                const floor = (status === 'mfj') ? 10000 : 5000;
 
-                if (status === 'mfj') {
-                    cap = 40000;
-                    if (magi > 500000) {
-                        cap = Math.max(10000, 40000 - (magi - 500000) * 0.30);
-                    }
-                    if (magi > 600000) {
-                        cap = 10000;
-                    }
-                } else { // mfs
-                    cap = 20000;
-                    if (magi > 250000) {
-                        cap = Math.max(5000, 20000 - (magi - 250000) * 0.30);
-                    }
-                    if (magi > 300000) {
-                        cap = 5000;
-                    }
+                if (magi > phaseOutStart) {
+                    cap = Math.max(floor, cap - (magi - phaseOutStart) * 0.30);
                 }
-                saltCapAmountP.textContent = `$${cap.toLocaleString()}`;
+                
+                saltCapAmountP.textContent = `$${Math.round(cap).toLocaleString()}`;
                 saltResultDiv.classList.remove('hidden');
             });
             
             function renderBusinessProvisions(type) {
                 const provisions = appData.businessProvisions[type];
-                let content = '<div class="space-y-6">';
-                provisions.forEach(p => {
-                    content += `
-                        <div class="p-4 border-l-4 ${type === 'post' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-400 bg-slate-50'} rounded-r-lg">
-                           <h4 class="text-xl font-semibold text-slate-800">${p.title}</h4>
-                           <p class="mt-1 text-slate-700">${p.content}</p>
-                           <p class="mt-2 text-sm font-medium ${type === 'post' ? 'text-indigo-800' : 'text-slate-600'}">
-                                <span class="font-bold">Key Implication:</span> ${p.implication}
-                           </p>
-                        </div>
-                    `;
-                });
-                content += '</div>';
-                businessProvisionsContent.innerHTML = content;
+                businessProvisionsContent.innerHTML = `<div class="space-y-6">${provisions.map(p => `<div class="p-4 border-l-4 ${type === 'post' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-400 bg-slate-50'} rounded-r-lg"><h4 class="text-xl font-semibold text-slate-800">${p.title}</h4><p class="mt-1 text-slate-700">${p.content}</p><p class="mt-2 text-sm font-medium ${type === 'post' ? 'text-indigo-800' : 'text-slate-600'}"><span class="font-bold">Key Implication:</span> ${p.implication}</p></div>`).join('')}</div>`;
 
-                if(type === 'post') {
-                    postObbbBtn.classList.add('bg-indigo-600', 'text-white');
-                    postObbbBtn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-l-0', 'border-stone-300');
-                    preObbbBtn.classList.remove('bg-indigo-600', 'text-white');
-                    preObbbBtn.classList.add('bg-white', 'text-slate-700', 'border', 'border-stone-300');
-                } else {
-                    preObbbBtn.classList.add('bg-indigo-600', 'text-white');
-                    preObbbBtn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-stone-300');
-                    postObbbBtn.classList.remove('bg-indigo-600', 'text-white');
-                    postObbbBtn.classList.add('bg-white', 'text-slate-700', 'border', 'border-l-0', 'border-stone-300');
-                }
+                postObbbBtn.classList.toggle('bg-indigo-600', type === 'post');
+                postObbbBtn.classList.toggle('text-white', type === 'post');
+                postObbbBtn.classList.toggle('bg-white', type !== 'post');
+                postObbbBtn.classList.toggle('text-slate-700', type !== 'post');
+                preObbbBtn.classList.toggle('bg-indigo-600', type !== 'post');
+                preObbbBtn.classList.toggle('text-white', type !== 'post');
+                preObbbBtn.classList.toggle('bg-white', type === 'post');
+                preObbbBtn.classList.toggle('text-slate-700', type === 'post');
             }
             
             preObbbBtn.addEventListener('click', () => renderBusinessProvisions('pre'));
             postObbbBtn.addEventListener('click', () => renderBusinessProvisions('post'));
 
-            function initChecklist() {
-                appData.actionChecklist.forEach(itemText => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center';
-                    li.innerHTML = `
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="h-5 w-5 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500">
-                            <span class="ml-3 text-slate-700 text-lg">${itemText}</span>
-                        </label>
-                    `;
-                    checklistContainer.appendChild(li);
+            function initStrategyGenerator() {
+                generateStrategyBtn.addEventListener('click', () => {
+                    const industry = industryInput.value.trim();
+                    if (!industry) {
+                        alert('Please enter an industry.');
+                        return;
+                    }
+                    const prompt = `You are an expert tax strategist advising a small business owner. The client's industry is "${industry}". Based on the "One Big Beautiful Bill" of 2025, which made the 20% QBI deduction and 100% bonus depreciation permanent, and restored immediate expensing for DOMESTIC R&D, provide 3-5 actionable and specific tax planning strategies for this business. For each strategy, briefly explain the benefit. Format the output clearly with headings.`;
+
+                    strategyOutputContainer.classList.remove('hidden');
+                    callGeminiAPI(prompt, strategyLoader, strategyOutput);
                 });
+
+                 copyStrategyBtn.addEventListener('click', () => {
+                    const textToCopy = strategyOutput.textContent;
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    copyStrategyBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyStrategyBtn.textContent = 'Copy Text'; }, 2000);
+                });
+            }
+
+            function initChecklist() {
+                checklistContainer.innerHTML = appData.actionChecklist.map(itemText => `<li class="flex items-center"><label class="flex items-center cursor-pointer"><input type="checkbox" class="h-5 w-5 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500"><span class="ml-3 text-slate-700 text-lg">${itemText}</span></label></li>`).join('');
             }
 
             const chart = new Chart(standardDeductionChartCtx, {
@@ -390,53 +472,16 @@
                     datasets: [{
                         label: '2025 Standard Deduction',
                         data: appData.standardDeductions.data,
-                        backgroundColor: [
-                            'rgba(165, 180, 252, 0.6)',
-                            'rgba(99, 102, 241, 0.6)',
-                            'rgba(199, 210, 254, 0.6)',
-                            'rgba(129, 140, 248, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgb(165, 180, 252)',
-                            'rgb(99, 102, 241)',
-                            'rgb(199, 210, 254)',
-                            'rgb(129, 140, 248)'
-                        ],
+                        backgroundColor: ['rgba(165, 180, 252, 0.6)', 'rgba(99, 102, 241, 0.6)', 'rgba(199, 210, 254, 0.6)', 'rgba(129, 140, 248, 0.6)'],
+                        borderColor: ['rgb(165, 180, 252)', 'rgb(99, 102, 241)', 'rgb(199, 210, 254)', 'rgb(129, 140, 248)'],
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(context.parsed.y);
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value, index, values) {
-                                    return '$' + (value/1000) + 'k';
-                                }
-                            }
-                        }
-                    }
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label || ''}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(c.parsed.y)}` }}},
+                    scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + (v/1000) + 'k' }}}
                 }
             });
 
@@ -444,6 +489,8 @@
             const initialHash = window.location.hash || '#dashboard';
             navigate(initialHash);
             initDeductionCards();
+            initEmailGenerator();
+            initStrategyGenerator();
             renderBusinessProvisions('pre');
             initChecklist();
         });
